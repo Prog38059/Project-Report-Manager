@@ -20,6 +20,7 @@ from app.common.types import ConstitutionCode
 
 
 from app.presentation.views.appraisal_view import AppraisalView
+from app.presentation.views.report_view import ReportView
 from app.presentation.views.statements_view import StatementsView
 
 
@@ -50,6 +51,7 @@ def test_main_window_and_views_instantiation(
     assert isinstance(window.view_projects, ProjectView)
     assert isinstance(window.view_statements, StatementsView)
     assert isinstance(window.view_appraisal, AppraisalView)
+    assert isinstance(window.view_reports, ReportView)
     assert isinstance(window.view_backup, BackupView)
 
     # Add a client and refresh views
@@ -83,6 +85,9 @@ def test_main_window_and_views_instantiation(
 
     window.nav_list.setCurrentRow(6)
     assert window.stack.currentIndex() == 6
+
+    window.nav_list.setCurrentRow(7)
+    assert window.stack.currentIndex() == 7
 
     window.close()
 

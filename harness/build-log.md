@@ -239,3 +239,67 @@
 - **Rollback notes:** Run `alembic downgrade 0003_phase3_financial_engine` or revert git commit.
 - **Approval requested for next phase:** Phase 5 — Report Generation & Export (PDF, Excel, Word multi-format export, custom styling, watermark, schedule notes, and calculation run audit linkage).
 
+## Phase 5 — Report Generation & Export Engine (Completed 2026-11-01)
+- **Date:** 2026-11-01
+- **Phase:** Phase 5 — Report Generation & Export Engine
+- **Summary:** Built the unified multi-format reporting and export system (Excel, Word, PDF) conforming to strict architectural separation and financial reporting guidelines:
+  1. Shared Report Data Object (`app/application/dtos/report_dto.py`):
+     - `ProjectReportDataDTO` serves as the single source of truth consumed by all renderers.
+     - Enforces non-negotiable architectural invariant: renderers consume pre-calculated figures and never recalculate numbers.
+     - Contains metadata, executive summary, cost & funding tables, horizontal multi-year statements (P&L, Balance Sheet, Cash Flow), loan amortization summaries, financial ratios, sensitivity matrix, and cross-statement validation certificates.
+  2. Excel Multi-Tab Workbook Renderer (`app/infrastructure/reporting/excel_renderer.py`):
+     - Utilizes `openpyxl` with professional financial styling (navy blue headers `#1B365D`, alternating row shading, thin borders).
+     - Renders 9 dedicated worksheets: Executive Summary, Projected P&L, Projected Balance Sheet, Projected Cash Flow, Ratios & DSCR, Break-Even & Sensitivity, Loan Amortization, Fixed Assets & Dep, and Audit & Validation.
+     - Strict layout standard: Column A = Sr. No., Column B = Note, Column C = Particulars, Columns D:J = Project Years 1–7.
+     - Freeze panes applied at cell `D5` so descriptive columns A–C remain permanently visible during horizontal scrolling.
+     - Indian currency grouping number format `₹ #,##,##0.00` applied to all monetary cells.
+  3. Word Document Renderer (`app/infrastructure/reporting/docx_renderer.py`):
+     - Utilizes `python-docx` to generate formatted Bank Credit Appraisal Books & DPRs.
+     - Includes styled cover page, executive summary grid, means of finance table, horizontal financial statement tables with repeating header rows (`cantSplit` and `tblHeader` XML elements), loan repayment schedule, ratio analysis, sensitivity matrix, and signed audit certificate.
+  4. PDF Landscape Renderer (`app/infrastructure/reporting/pdf_renderer.py`):
+     - Utilizes `reportlab` on A4 Landscape format (`pagesizes.landscape(A4)`).
+     - Two-pass `NumberedCanvas` delivering running headers with document title/project name and running footers with generation date, canonical calculation run input hash, and dynamic "Page X of Y" pagination.
+     - Flowables include multi-year horizontal financial statement tables, executive summary key indicator cards, DSCR appraisal breakdown, sensitivity matrix, and zero-plug invariant certificate.
+  5. Report Application Service & Audit Logging (`app/application/services/report_service.py`):
+     - Orchestrates retrieval of project data, statements, schedules, and appraisal reports from immutable calculation run snapshots.
+     - Computes SHA-256 cryptographic file hashes on generated export files.
+     - Persists generated report records into `generated_reports` database table linking `project_id`, `scenario_id`, `calculation_run_id`, `template_id`, file path, file size, SHA-256 hash, and UTC timestamp.
+  6. Database Models & Alembic Migration 0005 (`migrations/versions/0005_phase5_reporting.py`):
+     - Tables: `report_templates`, `report_template_sections`, `generated_reports`.
+     - Seeded standard templates: `TMPL_CMA_BANK` (Standard Bank CMA & Project Appraisal Book), `TMPL_DPR_FULL` (Detailed Project Report - Full), `TMPL_EXEC_SUMMARY` (Executive Summary & Term Sheet).
+  7. Desktop GUI Export View (`app/presentation/views/report_view.py`):
+     - Dedicated Report & Export management screen integrated into `MainWindow` navigation rail with index 6.
+     - Scenario & template selectors, one-click export buttons for Excel (`.xlsx`), Word (`.docx`), PDF (`.pdf`), and "Export All Formats (Bundle)".
+     - Live KPI summary card and historical audit table of all previously generated files with double-click open support.
+  8. Test Suite:
+     - End-to-end integration test (`tests/integration/test_report_service.py`) verifying file creation, valid byte signatures, correct freeze panes, sheet count, table counts, and cross-renderer numerical agreement.
+     - UI integration test (`tests/integration/test_ui_views.py`) verifying `ReportView` instantiation and nav rail switching.
+     - Total: 51 passed tests in 11.04s (100% pass rate).
+- **Files changed / created:**
+  - `app/infrastructure/database/models/report_model.py`
+  - `app/infrastructure/database/models/__init__.py`
+  - `app/infrastructure/repositories/report_repository.py`
+  - `app/infrastructure/repositories/__init__.py`
+  - `app/application/dtos/report_dto.py`
+  - `app/infrastructure/reporting/__init__.py`
+  - `app/infrastructure/reporting/excel_renderer.py`
+  - `app/infrastructure/reporting/docx_renderer.py`
+  - `app/infrastructure/reporting/pdf_renderer.py`
+  - `app/application/services/report_service.py`
+  - `app/application/services/__init__.py`
+  - `app/presentation/views/report_view.py`
+  - `app/presentation/main_window.py`
+  - `migrations/versions/0005_phase5_reporting.py`
+  - `tests/integration/test_report_service.py`
+  - `tests/integration/test_ui_views.py`
+  - `harness/build-log.md`
+- **Database migrations:**
+  - `0005_phase5_reporting.py` (creates `report_templates`, `report_template_sections`, and `generated_reports`).
+- **Tests/commands executed:**
+  - `python -m pytest tests/`
+- **Test results:** 51 passed in 11.04s (100% passing, 0 warnings, 0 failures).
+- **Known issues:** None.
+- **Rollback notes:** Run `alembic downgrade 0004_phase4_appraisal_and_validation` or revert git commit.
+- **Approval requested for next phase:** Phase 6 — Hardening, Packaging, Documentation & Release.
+
+

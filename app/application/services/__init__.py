@@ -10,6 +10,7 @@ from app.application.services.funding_service import FundingService
 from app.application.services.historical_service import HistoricalService
 from app.application.services.project_cost_service import ProjectCostService
 from app.application.services.project_service import ProjectService
+from app.application.services.report_service import ReportService
 from app.application.services.revenue_service import RevenueService
 from app.application.services.template_service import TemplateService
 
@@ -24,6 +25,7 @@ __all__ = [
     "HistoricalService",
     "ProjectCostService",
     "ProjectService",
+    "ReportService",
     "RevenueService",
     "TemplateService",
 ]

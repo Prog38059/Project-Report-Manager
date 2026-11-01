@@ -7,20 +7,21 @@ from app.infrastructure.repositories.funding_repository import FundingRepository
 from app.infrastructure.repositories.historical_repository import HistoricalRepository
 from app.infrastructure.repositories.project_cost_repository import ProjectCostRepository
 from app.infrastructure.repositories.project_repository import ProjectRepository
-from app.infrastructure.repositories.calculation_repository import CalculationRepository
+from app.infrastructure.repositories.report_repository import ReportRepository
 from app.infrastructure.repositories.revenue_repository import RevenueRepository
 from app.infrastructure.repositories.template_repository import TemplateRepository
 
 __all__ = [
+    "CalculationRepository",
     "ClientRepository",
     "EntityRepository",
-    "ProjectRepository",
-    "ProjectCostRepository",
-    "FundingRepository",
-    "RevenueRepository",
     "ExpenseRepository",
-    "TemplateRepository",
+    "FundingRepository",
     "HistoricalRepository",
-    "CalculationRepository",
+    "ProjectCostRepository",
+    "ProjectRepository",
+    "ReportRepository",
+    "RevenueRepository",
+    "TemplateRepository",
 ]
 

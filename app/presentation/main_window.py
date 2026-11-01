@@ -26,6 +26,7 @@ from app.application.services.funding_service import FundingService
 from app.application.services.historical_service import HistoricalService
 from app.application.services.project_cost_service import ProjectCostService
 from app.application.services.project_service import ProjectService
+from app.application.services.report_service import ReportService
 from app.application.services.revenue_service import RevenueService
 from app.application.services.template_service import TemplateService
 
@@ -35,6 +36,7 @@ from app.presentation.views.client_view import ClientView
 from app.presentation.views.dashboard_view import DashboardView
 from app.presentation.views.entity_view import EntityView
 from app.presentation.views.project_view import ProjectView
+from app.presentation.views.report_view import ReportView
 from app.presentation.views.statements_view import StatementsView
 from app.presentation.widgets.context_bar import ContextBar
 
@@ -68,6 +70,7 @@ class MainWindow(QMainWindow):
         self.historical_service = HistoricalService(db_manager)
         self.fin_engine_service = FinancialEngineService(db_manager)
         self.appraisal_service = AppraisalService(db_manager)
+        self.report_service = ReportService(db_manager, config)
 
         self.setWindowTitle("Project Report Manager v1.0")
         self.resize(1180, 750)
@@ -120,7 +123,8 @@ class MainWindow(QMainWindow):
             ("📁 Projects", 3),
             ("📈 Statements", 4),
             ("⚖️ Appraisal & Audit", 5),
-            ("💾 Backup & Restore", 6),
+            ("📑 Reports & Export", 6),
+            ("💾 Backup & Restore", 7),
         ]
         for label, idx in nav_items:
             item = QListWidgetItem(label)
@@ -154,6 +158,10 @@ class MainWindow(QMainWindow):
             project_service=self.project_service,
             appraisal_service=self.appraisal_service,
         )
+        self.view_reports = ReportView(
+            project_service=self.project_service,
+            report_service=self.report_service,
+        )
         self.view_backup = BackupView(self.backup_service, self.config)
 
         self.stack.addWidget(self.view_dashboard)
@@ -162,6 +170,7 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.view_projects)
         self.stack.addWidget(self.view_statements)
         self.stack.addWidget(self.view_appraisal)
+        self.stack.addWidget(self.view_reports)
         self.stack.addWidget(self.view_backup)
 
         body_layout.addWidget(self.stack)
@@ -203,6 +212,8 @@ class MainWindow(QMainWindow):
         elif row == 5:
             self.view_appraisal.refresh_projects_list()
         elif row == 6:
+            self.view_reports.refresh()
+        elif row == 7:
             self.view_backup.refresh()
 
 
