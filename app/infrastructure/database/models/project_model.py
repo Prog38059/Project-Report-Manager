@@ -71,6 +71,16 @@ class ProjectModel(Base, TimestampMixin):
         cascade="all, delete-orphan",
         order_by="ProjectPeriodModel.display_sequence",
     )
+    sources = relationship(
+        "ProjectSourceModel",
+        back_populates="project",
+        cascade="all, delete-orphan",
+    )
+    historical_lines = relationship(
+        "HistoricalStatementLineModel",
+        back_populates="project",
+        cascade="all, delete-orphan",
+    )
 
 
 class ProjectScenarioModel(Base, TimestampMixin):
@@ -97,6 +107,26 @@ class ProjectScenarioModel(Base, TimestampMixin):
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     project: Mapped["ProjectModel"] = relationship("ProjectModel", back_populates="scenarios")
+    cost_items = relationship(
+        "ProjectCostItemModel",
+        back_populates="scenario",
+        cascade="all, delete-orphan",
+    )
+    funding_sources = relationship(
+        "FundingSourceModel",
+        back_populates="scenario",
+        cascade="all, delete-orphan",
+    )
+    revenue_streams = relationship(
+        "RevenueStreamModel",
+        back_populates="scenario",
+        cascade="all, delete-orphan",
+    )
+    expense_forecasts = relationship(
+        "ExpenseForecastModel",
+        back_populates="scenario",
+        cascade="all, delete-orphan",
+    )
 
     __table_args__ = (
         UniqueConstraint("project_id", "scenario_code", name="uq_project_scenarios_code"),

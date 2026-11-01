@@ -71,3 +71,5 @@ class ProjectSourceModel(Base, TimestampMixin):
     source_reference: Mapped[Optional[str]] = mapped_column(String(120), nullable=True)
     verification_status: Mapped[str] = mapped_column(String(25), nullable=False, default="UNVERIFIED")
     review_note: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    project = relationship("ProjectModel", back_populates="sources")

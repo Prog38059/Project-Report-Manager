@@ -77,6 +77,64 @@
 - **Tests/commands executed:**
   - `python -m pytest`
 - **Test results:** 23 passed in 1.98s (100% passing, 0 warnings, 0 failures)
-- **Known issues:** None.
 - **Rollback notes:** Revert git changes or drop database tables via `alembic downgrade base`.
 - **Approval requested for next phase:** Phase 2 — Project inputs (costs, means of finance, revenue, expenses, and industry templates).
+
+## Phase 2 — Project Inputs (Completed 2026-11-01)
+- **Date:** 2026-11-01
+- **Phase:** Phase 2 — Project Inputs
+- **Summary:** Implemented Project Inputs architecture: Project Cost heads and items (with basic cost, GST %, eligible ITC, non-creditable tax, capitalised amount, cash requirement); Means of Finance (funding heads, sources, visual reconciliation gap indicator, Debt/Equity ratio); Revenue Streams & multi-year forecasting methods (Capacity x Utilisation x Price, Units x Price, Customers x Avg Bill, Occupancy, Rental, Headcount, Turnover Growth, Manual, and GST treatment); Operating Expenses forecasting (Fixed, Growth, % Revenue, Per Unit, Manual); 10 starter Industry Templates (Manufacturing, Trading, Hospital, Hotel, Restaurant, EV Charging, Transport, Education, Rental, Services); Historical Financial Statements (strictly hidden by default, enabled per project); Alembic migration `0002_phase2_inputs.py` with seed master data; and updated PySide6 Project View with interactive input tables and reconciliation badges.
+- **Files changed / created:**
+  - `app/common/types.py`
+  - `app/domain/entities/project_cost.py`
+  - `app/domain/entities/funding.py`
+  - `app/domain/entities/revenue.py`
+  - `app/domain/entities/expense.py`
+  - `app/domain/entities/industry_template.py`
+  - `app/domain/entities/historical_statement.py`
+  - `app/domain/entities/__init__.py`
+  - `app/infrastructure/database/models/project_cost_model.py`
+  - `app/infrastructure/database/models/funding_model.py`
+  - `app/infrastructure/database/models/revenue_model.py`
+  - `app/infrastructure/database/models/expense_model.py`
+  - `app/infrastructure/database/models/template_model.py`
+  - `app/infrastructure/database/models/historical_model.py`
+  - `app/infrastructure/database/models/attachment_model.py`
+  - `app/infrastructure/database/models/project_model.py`
+  - `app/infrastructure/database/models/__init__.py`
+  - `app/infrastructure/repositories/project_cost_repository.py`
+  - `app/infrastructure/repositories/funding_repository.py`
+  - `app/infrastructure/repositories/revenue_repository.py`
+  - `app/infrastructure/repositories/expense_repository.py`
+  - `app/infrastructure/repositories/template_repository.py`
+  - `app/infrastructure/repositories/historical_repository.py`
+  - `app/infrastructure/repositories/project_repository.py`
+  - `app/infrastructure/repositories/__init__.py`
+  - `app/application/dtos/project_cost_dto.py`
+  - `app/application/dtos/funding_dto.py`
+  - `app/application/dtos/revenue_dto.py`
+  - `app/application/dtos/expense_dto.py`
+  - `app/application/dtos/template_dto.py`
+  - `app/application/dtos/historical_dto.py`
+  - `app/application/services/project_cost_service.py`
+  - `app/application/services/funding_service.py`
+  - `app/application/services/revenue_service.py`
+  - `app/application/services/expense_service.py`
+  - `app/application/services/template_service.py`
+  - `app/application/services/historical_service.py`
+  - `app/application/services/__init__.py`
+  - `app/presentation/views/project_view.py`
+  - `app/presentation/main_window.py`
+  - `migrations/versions/0002_phase2_inputs.py`
+  - `tests/unit/test_phase2_calculations.py`
+  - `tests/integration/test_phase2_services.py`
+  - `tests/integration/test_migration.py`
+- **Database migrations:**
+  - `0002_phase2_inputs.py` (creates `project_cost_heads`, `project_cost_items`, `funding_heads`, `funding_sources`, `revenue_methods`, `revenue_streams`, `revenue_forecasts`, `expense_heads`, `expense_forecasts`, `industry_templates`, `industry_template_fields`, `historical_statement_lines`, and seeds 9 revenue methods, 10 cost heads, 6 funding heads, 10 expense heads, and 10 starter industry templates).
+- **Tests/commands executed:**
+  - `python -m pytest -v`
+- **Test results:** 36 passed in 4.72s (100% passing, 0 warnings, 0 failures).
+- **Known issues:** None.
+- **Rollback notes:** Revert git commits or run `alembic downgrade 0001_phase1_foundation`.
+- **Approval requested for next phase:** Phase 3 — Financial Engine (fixed assets, depreciation books, loan amortization schedules, working capital cycles, tax provisions, and integrated P&L, Balance Sheet, and Cash Flow financial statements).
+

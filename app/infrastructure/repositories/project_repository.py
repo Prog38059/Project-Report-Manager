@@ -243,6 +243,8 @@ class ProjectRepository:
         models = self.session.execute(stmt).scalars().all()
         return [self._period_to_entity(m) for m in models]
 
+    list_periods_for_project = list_periods
+
     def save_periods(self, periods: List[ProjectPeriod]) -> None:
         for p in periods:
             m = self.session.get(ProjectPeriodModel, p.id)

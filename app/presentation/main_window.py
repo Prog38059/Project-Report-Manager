@@ -20,6 +20,12 @@ from app.application.services.client_service import ClientService
 from app.application.services.entity_service import EntityService
 from app.application.services.project_service import ProjectService
 from app.application.services.backup_service import BackupService
+from app.application.services.project_cost_service import ProjectCostService
+from app.application.services.funding_service import FundingService
+from app.application.services.revenue_service import RevenueService
+from app.application.services.expense_service import ExpenseService
+from app.application.services.template_service import TemplateService
+from app.application.services.historical_service import HistoricalService
 
 from app.presentation.widgets.context_bar import ContextBar
 from app.presentation.views.dashboard_view import DashboardView
@@ -49,6 +55,12 @@ class MainWindow(QMainWindow):
         self.entity_service = EntityService(db_manager, encryption_service)
         self.project_service = ProjectService(db_manager)
         self.backup_service = BackupService(config, db_manager)
+        self.project_cost_service = ProjectCostService(db_manager)
+        self.funding_service = FundingService(db_manager)
+        self.revenue_service = RevenueService(db_manager)
+        self.expense_service = ExpenseService(db_manager)
+        self.template_service = TemplateService(db_manager)
+        self.historical_service = HistoricalService(db_manager)
 
         self.setWindowTitle("Project Report Manager v1.0")
         self.resize(1180, 750)
@@ -114,7 +126,17 @@ class MainWindow(QMainWindow):
         self.view_dashboard = DashboardView()
         self.view_clients = ClientView(self.client_service)
         self.view_entities = EntityView(self.client_service, self.entity_service)
-        self.view_projects = ProjectView(self.client_service, self.entity_service, self.project_service)
+        self.view_projects = ProjectView(
+            client_service=self.client_service,
+            entity_service=self.entity_service,
+            project_service=self.project_service,
+            project_cost_service=self.project_cost_service,
+            funding_service=self.funding_service,
+            revenue_service=self.revenue_service,
+            expense_service=self.expense_service,
+            template_service=self.template_service,
+            historical_service=self.historical_service,
+        )
         self.view_backup = BackupView(self.backup_service, self.config)
 
         self.stack.addWidget(self.view_dashboard)

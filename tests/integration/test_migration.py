@@ -23,7 +23,6 @@ def test_alembic_upgrade_and_downgrade(test_config: AppConfig):
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = {row[0] for row in cursor.fetchall()}
-    conn.close()
 
     assert "clients" in tables
     assert "entities" in tables
@@ -31,6 +30,31 @@ def test_alembic_upgrade_and_downgrade(test_config: AppConfig):
     assert "attachments" in tables
     assert "huf_details" in tables
     assert "company_details" in tables
+    assert "project_cost_heads" in tables
+    assert "project_cost_items" in tables
+    assert "funding_heads" in tables
+    assert "funding_sources" in tables
+    assert "revenue_methods" in tables
+    assert "revenue_streams" in tables
+    assert "revenue_forecasts" in tables
+    assert "expense_heads" in tables
+    assert "expense_forecasts" in tables
+    assert "industry_templates" in tables
+    assert "industry_template_fields" in tables
+    assert "historical_statement_lines" in tables
+
+    # Verify seed data
+    cursor.execute("SELECT COUNT(*) FROM industry_templates;")
+    assert cursor.fetchone()[0] == 10
+    cursor.execute("SELECT COUNT(*) FROM revenue_methods;")
+    assert cursor.fetchone()[0] == 9
+    cursor.execute("SELECT COUNT(*) FROM project_cost_heads;")
+    assert cursor.fetchone()[0] >= 10
+    cursor.execute("SELECT COUNT(*) FROM funding_heads;")
+    assert cursor.fetchone()[0] >= 6
+    cursor.execute("SELECT COUNT(*) FROM expense_heads;")
+    assert cursor.fetchone()[0] >= 10
+    conn.close()
 
     # 2. Downgrade to base
     command.downgrade(alembic_cfg, "base")
