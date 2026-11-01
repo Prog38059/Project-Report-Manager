@@ -1,0 +1,15 @@
+{
+  "fixture_id": "FIX-TAX-001",
+  "title": "Single-rate tax-inclusive amount decomposition",
+  "status": "specification_only",
+  "currency": "INR",
+  "inputs": {
+    "gross_inclusive_rupees": "10500",
+    "assumed_rate_percent": "5"
+  },
+  "expected": {
+    "net_amount_paise": 1000000,
+    "tax_amount_paise": 50000
+  },
+  "notes": "Assumed 5% rate is used only to test arithmetic. It is not a statement that the rate applies to a real transaction."
+}

@@ -1,0 +1,14 @@
+{
+  "fixture_id": "FIX-WC-001",
+  "title": "Net working capital identity",
+  "status": "specification_only",
+  "currency": "INR",
+  "inputs": {
+    "current_operating_assets_rupees": "1200000",
+    "current_operating_liabilities_rupees": "450000"
+  },
+  "expected": {
+    "net_working_capital_paise": 75000000
+  },
+  "notes": "Identity fixture only. Does not define a lender's working-capital assessment method."
+}

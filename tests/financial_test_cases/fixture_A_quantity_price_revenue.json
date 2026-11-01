@@ -1,0 +1,15 @@
+{
+  "fixture_id": "FIX-REV-001",
+  "title": "Quantity multiplied by price",
+  "status": "specification_only",
+  "currency": "INR",
+  "inputs": {
+    "quantity": "100",
+    "price_per_unit_rupees": "250",
+    "tax_treatment": "NOT_APPLICABLE_FOR_FIXTURE"
+  },
+  "expected": {
+    "net_revenue_paise": 2500000
+  },
+  "notes": "Arithmetic fixture only. Does not establish tax treatment for any actual supply."
+}

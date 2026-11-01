@@ -1,0 +1,82 @@
+# Build Log
+
+## Phase 1 — Foundation (Completed 2026-11-01)
+- **Date:** 2026-11-01
+- **Phase:** Phase 1 — Foundation
+- **Summary:** Built application foundation, configuration, local SQLite persistence with SQLAlchemy 2.0 and Alembic migrations, DPAPI/Fernet field-level encryption, log redaction, managed attachment store, backup/restore engine with manifest verification, and PySide6 desktop GUI shell with Client, Entity (6 constitutions), Member, and Project CRUD workflows.
+- **Files changed:**
+  - `pyproject.toml`
+  - `alembic.ini`
+  - `harness/decision-log.md`
+  - `harness/build-log.md`
+  - `app/__init__.py`
+  - `app/config.py`
+  - `app/main.py`
+  - `app/common/__init__.py`
+  - `app/common/exceptions.py`
+  - `app/common/types.py`
+  - `app/common/money.py`
+  - `app/domain/entities/__init__.py`
+  - `app/domain/entities/client.py`
+  - `app/domain/entities/legal_entity.py`
+  - `app/domain/entities/entity_member.py`
+  - `app/domain/entities/project.py`
+  - `app/domain/entities/attachment.py`
+  - `app/infrastructure/security/__init__.py`
+  - `app/infrastructure/security/encryption.py`
+  - `app/infrastructure/security/redaction.py`
+  - `app/infrastructure/storage/__init__.py`
+  - `app/infrastructure/storage/file_store.py`
+  - `app/infrastructure/database/__init__.py`
+  - `app/infrastructure/database/connection.py`
+  - `app/infrastructure/database/models/__init__.py`
+  - `app/infrastructure/database/models/base.py`
+  - `app/infrastructure/database/models/client_model.py`
+  - `app/infrastructure/database/models/entity_model.py`
+  - `app/infrastructure/database/models/project_model.py`
+  - `app/infrastructure/database/models/attachment_model.py`
+  - `app/infrastructure/database/models/audit_model.py`
+  - `app/infrastructure/repositories/__init__.py`
+  - `app/infrastructure/repositories/client_repository.py`
+  - `app/infrastructure/repositories/entity_repository.py`
+  - `app/infrastructure/repositories/project_repository.py`
+  - `app/application/__init__.py`
+  - `app/application/dtos/__init__.py`
+  - `app/application/dtos/client_dto.py`
+  - `app/application/dtos/entity_dto.py`
+  - `app/application/dtos/project_dto.py`
+  - `app/application/services/__init__.py`
+  - `app/application/services/client_service.py`
+  - `app/application/services/entity_service.py`
+  - `app/application/services/project_service.py`
+  - `app/application/services/backup_service.py`
+  - `app/presentation/__init__.py`
+  - `app/presentation/main_window.py`
+  - `app/presentation/widgets/context_bar.py`
+  - `app/presentation/widgets/sensitive_field.py`
+  - `app/presentation/views/dashboard_view.py`
+  - `app/presentation/views/client_view.py`
+  - `app/presentation/views/entity_view.py`
+  - `app/presentation/views/project_view.py`
+  - `app/presentation/views/project_wizard.py`
+  - `app/presentation/views/backup_view.py`
+  - `migrations/env.py`
+  - `migrations/script.py.mako`
+  - `migrations/versions/0001_phase1_foundation.py`
+  - `tests/conftest.py`
+  - `tests/unit/test_money.py`
+  - `tests/unit/test_security.py`
+  - `tests/unit/test_domain_entities.py`
+  - `tests/integration/test_migration.py`
+  - `tests/integration/test_attachment_storage.py`
+  - `tests/integration/test_client_entity_crud.py`
+  - `tests/integration/test_backup_restore.py`
+  - `tests/integration/test_ui_views.py`
+- **Database migrations:**
+  - `0001_phase1_foundation.py` (creates `clients`, `entities`, `entity_members`, `entity_identifiers`, `huf_details`, `proprietorship_details`, `partnership_details`, `llp_details`, `company_details`, `projects`, `project_sources`, `attachments`, `project_scenarios`, `project_periods`, `audit_events`, `app_settings`, `backup_history`)
+- **Tests/commands executed:**
+  - `python -m pytest`
+- **Test results:** 23 passed in 1.98s (100% passing, 0 warnings, 0 failures)
+- **Known issues:** None.
+- **Rollback notes:** Revert git changes or drop database tables via `alembic downgrade base`.
+- **Approval requested for next phase:** Phase 2 — Project inputs (costs, means of finance, revenue, expenses, and industry templates).

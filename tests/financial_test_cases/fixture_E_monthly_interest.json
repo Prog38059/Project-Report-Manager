@@ -1,0 +1,17 @@
+{
+  "fixture_id": "FIX-LOAN-001",
+  "title": "One-month periodic interest calculation",
+  "status": "specification_only",
+  "currency": "INR",
+  "inputs": {
+    "opening_principal_rupees": "1000000",
+    "annual_nominal_rate_percent": "12",
+    "period_months": 1,
+    "method": "annual_nominal_rate_divided_by_12"
+  },
+  "expected": {
+    "periodic_rate": "0.01",
+    "interest_paise": 1000000
+  },
+  "notes": "One-month interest calculation fixture only; not an EMI or lender day-count fixture."
+}

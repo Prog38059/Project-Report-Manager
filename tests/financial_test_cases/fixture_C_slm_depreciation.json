@@ -1,0 +1,16 @@
+{
+  "fixture_id": "FIX-DEP-001",
+  "title": "Full-year straight-line depreciation",
+  "status": "specification_only",
+  "currency": "INR",
+  "inputs": {
+    "capitalised_cost_rupees": "1000000",
+    "residual_value_rupees": "100000",
+    "useful_life_years": "9",
+    "time_fraction": "1"
+  },
+  "expected": {
+    "annual_depreciation_paise": 10000000
+  },
+  "notes": "Book depreciation arithmetic fixture. Does not prescribe an asset useful life or tax depreciation rate."
+}
