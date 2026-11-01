@@ -19,6 +19,7 @@ class DashboardView(QWidget):
     request_new_project = Signal()
     request_new_client = Signal()
     request_view_projects = Signal()
+    request_load_demo = Signal()
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
@@ -67,9 +68,15 @@ class DashboardView(QWidget):
         btn_view_projs.setFixedHeight(36)
         btn_view_projs.clicked.connect(self.request_view_projects.emit)
 
+        btn_load_demo = QPushButton("✨ Load Demo Project")
+        btn_load_demo.setFixedHeight(36)
+        btn_load_demo.setStyleSheet("background-color: #6f42c1; color: white; font-weight: bold; border-radius: 4px; padding: 0 12px;")
+        btn_load_demo.clicked.connect(self.request_load_demo.emit)
+
         actions_layout.addWidget(btn_new_proj)
         actions_layout.addWidget(btn_new_client)
         actions_layout.addWidget(btn_view_projs)
+        actions_layout.addWidget(btn_load_demo)
         actions_layout.addStretch()
 
         layout.addWidget(actions_group)

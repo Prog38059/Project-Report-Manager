@@ -3,6 +3,7 @@
 from app.application.services.appraisal_service import AppraisalService
 from app.application.services.backup_service import BackupService
 from app.application.services.client_service import ClientService
+from app.application.services.demo_service import DemoProjectService, DemoProjectSummaryDTO
 from app.application.services.entity_service import EntityService
 from app.application.services.expense_service import ExpenseService
 from app.application.services.financial_engine_service import FinancialEngineService
@@ -18,6 +19,8 @@ __all__ = [
     "AppraisalService",
     "BackupService",
     "ClientService",
+    "DemoProjectService",
+    "DemoProjectSummaryDTO",
     "EntityService",
     "ExpenseService",
     "FinancialEngineService",

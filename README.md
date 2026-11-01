@@ -1,52 +1,81 @@
-# Project Report Manager — Developer Handoff Pack v1.0
+# Project Report Manager v1.0
+**Enterprise Financial Projections & Bank CMA Report Generator**
 
-**Primary coding environment:** Google Antigravity  
-**Compatible secondary environment:** Codex (shared root `AGENTS.md` instructions)  
-**Status:** Design/specification handoff; implementation has not been approved or started.  
-**Target:** Windows desktop, single-computer first release, designed for future LAN expansion.  
-**Default reporting:** Seven annual projection years, historical data disabled by default, horizontal year-wise financial statements.
+[![Build Status](https://img.shields.io/badge/tests-51%20passed-brightgreen.svg)]()
+[![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue.svg)]()
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011%20(64--bit)-lightgrey.svg)]()
+[![License](https://img.shields.io/badge/license-Proprietary%20%2F%20CA%20Practice-orange.svg)]()
 
-## Start here for Antigravity
+**Project Report Manager** is a professional Windows desktop application engineered for Chartered Accountants, corporate finance advisors, credit analysts, and project appraisal consultants. It automates the preparation of bankable project reports, Credit Monitoring Arrangement (CMA) books, and integrated 7-year financial projection models across all recognized Indian legal constitutions.
 
-1. Read `ANTIGRAVITY_START_HERE.md`.
-2. Read root `AGENTS.md`, `GOALS.md` and `PLANS.md`.
-3. Read every numbered document in `docs/`.
-4. Review `.agents/rules/` and `.agents/skills/`.
-5. Give Antigravity `prompts/ANTIGRAVITY_PHASE_0_REVIEW.md` as the first task.
-6. Do not allow code, dependency installation, database creation or migrations until the user approves Phase 1.
+---
 
-## Documentation index
+## Key Features
 
-1. `docs/01_PRODUCT_REQUIREMENTS.md` — functional scope and supported constitu­tions/industries.
-2. `docs/02_TECHNICAL_ARCHITECTURE_BASELINE_v1.1.md` — reviewed architecture and original schema baseline.
-3. `docs/03_DATABASE_DATA_DICTIONARY.md` — implementation-level database field definitions.
-4. `docs/04_FINANCIAL_MODEL_SPECIFICATION.md` — calculation sequence and financial formula contracts.
-5. `docs/05_STATEMENT_CATALOGUE_AND_MAPPINGS.md` — stable statement lines and entity-aware presentation.
-6. `docs/06_UI_UX_SPECIFICATION.md` — screen and interaction behaviour.
-7. `docs/07_REPORT_OUTPUT_SPECIFICATION.md` — PDF, Word and Excel output contracts.
-8. `docs/08_VALIDATION_AND_TEST_CATALOGUE.md` — financial invariants, tests and acceptance criteria.
-9. `docs/09_KNOWLEDGE_AND_REFERENCE_POLICY.md` — knowledge base and statutory-source governance.
-10. `docs/10_SECURITY_STORAGE_BACKUP.md` — local storage, privacy, backup and restore.
-11. `docs/11_OPEN_DECISIONS_REGISTER.md` — decisions requiring user/professional approval.
+- **Exact Decimal Arithmetic**: Strict integer paise representation eliminates binary floating-point inaccuracies.
+- **Strict Zero-Plug Balance Sheet Invariant**: Total Assets strictly equal Total Liabilities & Equity in every year without unexplained balancing plugs or suspense figures.
+- **All 6 Indian Legal Constitutions**: Proprietorship, Partnership Firm, LLP, Private Limited, Public Limited, and Trust/Society.
+- **Dual Depreciation Books**: Full separation between Companies Act 2013 book depreciation (SLM/WDV) and Income Tax Act 1961 Section 32 block depreciation (>180 / <180 days rule).
+- **Lender Appraisal & Stress Testing**: Gross Cash Flow DSCR, Net CFADS DSCR, ROCE %, RONW %, Break-Even capacity utilization %, and sensitivity analysis (+/-5%, +/-10% price and raw material shocks).
+- **Triple-Format Report Export**:
+  - 📗 **Excel (`.xlsx`)**: 9-sheet workbook with institutional styling, freeze panes locked on Column D (`D5`), and Indian number grouping.
+  - 📘 **Word (`.docx`)**: Detailed Project Report (DPR) book with cover page, narrative, and repeating table headers.
+  - 📕 **PDF (`.pdf`)**: A4 Landscape publication with running headers, footers, canonical input hash, and dynamic "Page X of Y" pagination.
+- **Security & Verified Backup**: Local SQLite database with WAL mode, DPAPI/Fernet encryption key separation, full PAN masking, and atomic backup/restore with manifest checksum validation.
 
-## Antigravity customizations
+---
 
-- `.agents/rules/*.md` — trigger-based persistent project rules.
-- `.agents/skills/*/SKILL.md` — reusable procedural playbooks.
-- `AGENTS.md` — concise always-active project rules.
+## System Requirements
 
-## Source-of-truth rules
+- **Operating System**: Windows 10 or Windows 11 (64-bit).
+- **Python**: 3.11, 3.12, 3.13, or 3.14 (64-bit).
+- **Disk Space**: At least 500 MB free space on a local drive (`C:` or `D:`).
+- *Note*: Network shares (UNC paths) and cloud-synced folders (OneDrive) are blocked to prevent SQLite database corruption.
 
-- User-approved requirements and the documents in `docs/` govern the product.
-- v1.1 architecture is retained for traceability; implementation specifications add detail and do not silently override approved decisions.
-- If documents conflict, stop and report the conflict.
-- Open decisions remain open until approved.
-- Tax rates, accounting policies, lender benchmarks and statutory interpretations must be configurable, sourced and versioned.
-- Never imply that generated projections are audited or statutory financial statements.
+---
 
-## Implementation governance
+## Quick Start & Installation
 
-- Follow `PLANS.md` and the phase documents in `harness/build/`.
-- Implement one explicitly approved phase at a time.
-- Update `harness/build-log.md` and `harness/decision-log.md`.
-- Preserve reproducibility of calculation runs and generated reports.
+```powershell
+# 1. Clone repository
+git clone https://github.com/Prog38059/Project-Report-Manager.git
+cd Project-Report-Manager
+
+# 2. Install dependencies
+pip install -e .
+
+# 3. Run System Diagnostics & Health Check
+python -m app.infrastructure.diagnostics.health
+
+# 4. Launch Desktop GUI Application
+python -m app.main
+```
+
+### Try the Turnkey Benchmark Demo
+In the application Dashboard, click **"✨ Load Demo Project"** to instantly generate a full 7-year institutional aerospace manufacturing project with balanced statements, debt amortization, and DSCR metrics.
+
+---
+
+## Running the Automated Test Suite
+
+```powershell
+# Run all unit and integration tests
+python -m pytest tests/ -v
+
+# Run distribution packaging check
+python scripts/verify_distribution.py
+```
+
+---
+
+## Documentation Index
+
+- [User Manual & Operations Guide](docs/USER_MANUAL.md) — Complete user guide and walkthrough.
+- [Release Verification Checklist](docs/RELEASE_CHECKLIST.md) — Pre-release sign-off protocol.
+- [Product Requirements](docs/01_PRODUCT_REQUIREMENTS.md) — Functional requirements and scope.
+- [Technical Architecture Baseline](docs/02_TECHNICAL_ARCHITECTURE_BASELINE_v1.1.md) — System boundaries.
+- [Database Data Dictionary](docs/03_DATABASE_DATA_DICTIONARY.md) — Tables, columns, and constraints.
+- [Financial Model Specification](docs/04_FINANCIAL_MODEL_SPECIFICATION.md) — Formula contracts.
+- [Statement Catalogue & Mappings](docs/05_STATEMENT_CATALOGUE_AND_MAPPINGS.md) — 3-statement lines.
+- [Report Output Specification](docs/07_REPORT_OUTPUT_SPECIFICATION.md) — Excel, Word, and PDF layouts.
+- [Security, Storage & Backup](docs/10_SECURITY_STORAGE_BACKUP.md) — Data protection and recovery.

@@ -4,6 +4,7 @@ from typing import Optional
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QMainWindow,
+    QMessageBox,
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
@@ -13,12 +14,14 @@ from PySide6.QtWidgets import (
     QStatusBar,
 )
 
+from app.common.money import format_inr
 from app.config import AppConfig
 from app.infrastructure.database.connection import DatabaseManager
 from app.infrastructure.security.encryption import EncryptionService
 from app.application.services.appraisal_service import AppraisalService
 from app.application.services.backup_service import BackupService
 from app.application.services.client_service import ClientService
+from app.application.services.demo_service import DemoProjectService
 from app.application.services.entity_service import EntityService
 from app.application.services.expense_service import ExpenseService
 from app.application.services.financial_engine_service import FinancialEngineService
@@ -71,6 +74,7 @@ class MainWindow(QMainWindow):
         self.fin_engine_service = FinancialEngineService(db_manager)
         self.appraisal_service = AppraisalService(db_manager)
         self.report_service = ReportService(db_manager, config)
+        self.demo_service = DemoProjectService(db_manager)
 
         self.setWindowTitle("Project Report Manager v1.0")
         self.resize(1180, 750)
@@ -191,6 +195,7 @@ class MainWindow(QMainWindow):
         self.view_dashboard.request_new_project.connect(self._open_project_wizard)
         self.view_dashboard.request_new_client.connect(self._open_add_client)
         self.view_dashboard.request_view_projects.connect(lambda: self.nav_list.setCurrentRow(3))
+        self.view_dashboard.request_load_demo.connect(self._on_load_demo_project)
 
         # Context selection updates
         self.view_clients.client_selected.connect(self._on_client_selected)
@@ -245,3 +250,27 @@ class MainWindow(QMainWindow):
             project_name=f"{project.project_name} ({project.project_code})",
             status=project.status_code.value,
         )
+
+    def _on_load_demo_project(self) -> None:
+        try:
+            demo_summary = self.demo_service.create_or_get_demo_project()
+            self._refresh_dashboard_counts()
+            dscr_str = f"{demo_summary.average_dscr:.2f}x" if demo_summary.average_dscr else "N/A"
+            irr_str = f"{demo_summary.project_irr_pct:.2f}%" if demo_summary.project_irr_pct else "N/A"
+            QMessageBox.information(
+                self,
+                "Demo Project Loaded",
+                f"Successfully initialized benchmark demo project!\n\n"
+                f"• Client: {demo_summary.client_name}\n"
+                f"• Entity: {demo_summary.entity_name}\n"
+                f"• Project: {demo_summary.project_name}\n"
+                f"• Total Cost: ₹{format_inr(demo_summary.total_cost_rupees)}\n"
+                f"• Debt / Equity: ₹{format_inr(demo_summary.term_debt_rupees)} / ₹{format_inr(demo_summary.equity_rupees)}\n"
+                f"• Average DSCR: {dscr_str}\n"
+                f"• Project IRR: {irr_str}\n"
+                f"• Invariant Status: {demo_summary.run_status}\n\n"
+                f"Navigating to Statements View...",
+            )
+            self.nav_list.setCurrentRow(4)  # Statements View
+        except Exception as e:
+            QMessageBox.critical(self, "Demo Creation Error", f"Failed to initialize demo project:\n{str(e)}")
