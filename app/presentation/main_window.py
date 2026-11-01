@@ -16,23 +16,26 @@ from PySide6.QtWidgets import (
 from app.config import AppConfig
 from app.infrastructure.database.connection import DatabaseManager
 from app.infrastructure.security.encryption import EncryptionService
+from app.application.services.backup_service import BackupService
 from app.application.services.client_service import ClientService
 from app.application.services.entity_service import EntityService
-from app.application.services.project_service import ProjectService
-from app.application.services.backup_service import BackupService
-from app.application.services.project_cost_service import ProjectCostService
-from app.application.services.funding_service import FundingService
-from app.application.services.revenue_service import RevenueService
 from app.application.services.expense_service import ExpenseService
-from app.application.services.template_service import TemplateService
+from app.application.services.financial_engine_service import FinancialEngineService
+from app.application.services.funding_service import FundingService
 from app.application.services.historical_service import HistoricalService
+from app.application.services.project_cost_service import ProjectCostService
+from app.application.services.project_service import ProjectService
+from app.application.services.revenue_service import RevenueService
+from app.application.services.template_service import TemplateService
 
-from app.presentation.widgets.context_bar import ContextBar
-from app.presentation.views.dashboard_view import DashboardView
+from app.presentation.views.backup_view import BackupView
 from app.presentation.views.client_view import ClientView
+from app.presentation.views.dashboard_view import DashboardView
 from app.presentation.views.entity_view import EntityView
 from app.presentation.views.project_view import ProjectView
-from app.presentation.views.backup_view import BackupView
+from app.presentation.views.statements_view import StatementsView
+from app.presentation.widgets.context_bar import ContextBar
+
 
 
 class MainWindow(QMainWindow):
@@ -61,6 +64,7 @@ class MainWindow(QMainWindow):
         self.expense_service = ExpenseService(db_manager)
         self.template_service = TemplateService(db_manager)
         self.historical_service = HistoricalService(db_manager)
+        self.fin_engine_service = FinancialEngineService(db_manager)
 
         self.setWindowTitle("Project Report Manager v1.0")
         self.resize(1180, 750)
@@ -111,7 +115,8 @@ class MainWindow(QMainWindow):
             ("👥 Clients", 1),
             ("🏛 Entities", 2),
             ("📁 Projects", 3),
-            ("💾 Backup & Restore", 4),
+            ("📈 Statements", 4),
+            ("💾 Backup & Restore", 5),
         ]
         for label, idx in nav_items:
             item = QListWidgetItem(label)
@@ -137,12 +142,17 @@ class MainWindow(QMainWindow):
             template_service=self.template_service,
             historical_service=self.historical_service,
         )
+        self.view_statements = StatementsView(
+            project_service=self.project_service,
+            financial_engine_service=self.fin_engine_service,
+        )
         self.view_backup = BackupView(self.backup_service, self.config)
 
         self.stack.addWidget(self.view_dashboard)
         self.stack.addWidget(self.view_clients)
         self.stack.addWidget(self.view_entities)
         self.stack.addWidget(self.view_projects)
+        self.stack.addWidget(self.view_statements)
         self.stack.addWidget(self.view_backup)
 
         body_layout.addWidget(self.stack)
@@ -180,7 +190,10 @@ class MainWindow(QMainWindow):
         elif row == 3:
             self.view_projects.refresh()
         elif row == 4:
+            self.view_statements.refresh_projects()
+        elif row == 5:
             self.view_backup.refresh()
+
 
     def _refresh_dashboard_counts(self) -> None:
         clients = len(self.client_service.list_clients())

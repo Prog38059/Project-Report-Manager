@@ -194,6 +194,8 @@ class ProjectService:
             projects = repo.list_all(include_archived=include_archived)
             return [self._to_dto(p) for p in projects]
 
+    list_projects = list_all_projects
+
     def archive_project(self, project_id: uuid.UUID) -> None:
         with self.db_manager.session_scope() as session:
             repo = ProjectRepository(session)

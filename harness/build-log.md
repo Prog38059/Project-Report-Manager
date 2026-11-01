@@ -138,3 +138,48 @@
 - **Rollback notes:** Revert git commits or run `alembic downgrade 0001_phase1_foundation`.
 - **Approval requested for next phase:** Phase 3 — Financial Engine (fixed assets, depreciation books, loan amortization schedules, working capital cycles, tax provisions, and integrated P&L, Balance Sheet, and Cash Flow financial statements).
 
+## Phase 3 — Financial Engine (Completed 2026-11-01)
+- **Date:** 2026-11-01
+- **Phase:** Phase 3 — Financial Engine
+- **Summary:** Built the complete pure-domain financial calculation engine and integrated 3-statement projection pipeline:
+  1. Asset & Depreciation Engine (`app/domain/financial/depreciation.py`) supporting book SLM, WDV, and Income Tax Act 1961 block depreciation (Section 32 >180 / <180 days rule).
+  2. Loan Amortization Engine (`app/domain/financial/loan_engine.py`) supporting monthly EMI reducing balance, equal principal, interest during construction/moratorium, final installment rounding clearing, and annual roll-ups with next 12-month current maturities.
+  3. Working Capital Engine (`app/domain/financial/working_capital.py`) implementing holding days for RM, WIP, Finished Goods, Debtors, Creditors, Net Working Capital identity (Golden Fixture D), and bank MPBF limits.
+  4. Tax & Equity Engines (`app/domain/financial/tax_engine.py` and `app/domain/financial/equity_engine.py`) supporting PBT/Depreciation adjustments, entity tax rates, and constitution-specific equity/reserves roll-forwards.
+  5. Integrated Three-Statement Pipeline (`app/domain/financial/statement_pipeline.py`) compiling multi-year Profit & Loss, Indirect Cash Flow, and Balance Sheet with strict Zero-Plug Invariant assertion (`total_assets == total_liabilities_and_equity` to the exact integer paise, without balancing/suspense plugs).
+  6. Persistence & Immutable Snapshots: Alembic migration `0003_phase3_financial_engine.py` creating `statement_line_definitions` (with seed statement lines), `entity_statement_mappings`, `calculation_runs`, `calculation_run_snapshots` (with SHA-256 input hash), `statement_line_results`, `loan_schedule_results`, and `asset_schedule_results`.
+  7. Application Services & DTOs: `FinancialEngineService` and `CalculationRepository` orchestrating full 7-year projections and returning horizontal statement tables (Columns A:C and Years 1:7).
+  8. Desktop GUI: `StatementsView` with dedicated sub-tabs for Profit & Loss, Balance Sheet, Indirect Cash Flow, Loan Amortization, and Asset Depreciation, integrated into `MainWindow` navigation with live Invariant status badge.
+  9. Test Suite: Verification against Golden Fixtures A, B, C, D, E, unit tests for all engines, migration upgrade/downgrade tests, and end-to-end integration tests.
+- **Files changed / created:**
+  - `app/domain/financial/__init__.py`
+  - `app/domain/financial/depreciation.py`
+  - `app/domain/financial/loan_engine.py`
+  - `app/domain/financial/working_capital.py`
+  - `app/domain/financial/tax_engine.py`
+  - `app/domain/financial/equity_engine.py`
+  - `app/domain/financial/statement_pipeline.py`
+  - `app/infrastructure/database/models/calculation_model.py`
+  - `app/infrastructure/database/models/__init__.py`
+  - `app/infrastructure/repositories/calculation_repository.py`
+  - `app/infrastructure/repositories/__init__.py`
+  - `app/application/dtos/financial_statements_dto.py`
+  - `app/application/services/financial_engine_service.py`
+  - `app/application/services/project_service.py`
+  - `app/presentation/views/statements_view.py`
+  - `app/presentation/main_window.py`
+  - `migrations/versions/0003_phase3_financial_engine.py`
+  - `tests/unit/test_golden_fixtures.py`
+  - `tests/unit/test_financial_engines.py`
+  - `tests/integration/test_financial_engine_service.py`
+  - `tests/integration/test_migration.py`
+  - `tests/integration/test_ui_views.py`
+- **Database migrations:**
+  - `0003_phase3_financial_engine.py` (creates `statement_line_definitions`, `entity_statement_mappings`, `calculation_runs`, `calculation_run_snapshots`, `statement_line_results`, `loan_schedule_results`, `asset_schedule_results`, and seeds 38 standard statement lines across P&L, BS, and Cash Flow).
+- **Tests/commands executed:**
+  - `python -m pytest -v`
+- **Test results:** 45 passed in 4.75s (100% passing, 0 warnings, 0 failures).
+- **Known issues:** None.
+- **Rollback notes:** Run `alembic downgrade 0002_phase2_inputs` or revert git commit.
+- **Approval requested for next phase:** Phase 4 — Appraisal Metrics & Validation (DSCR formulas, break-even analysis, IRR, NPV, sensitivity analysis, cross-statement validation rules, and error/warning reporting).
+

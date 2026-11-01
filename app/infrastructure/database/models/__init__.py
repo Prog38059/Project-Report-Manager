@@ -46,6 +46,15 @@ from app.infrastructure.database.models.revenue_model import (
     RevenueMethodModel,
     RevenueStreamModel,
 )
+from app.infrastructure.database.models.calculation_model import (
+    AssetScheduleResultModel,
+    CalculationRunModel,
+    CalculationRunSnapshotModel,
+    EntityStatementMappingModel,
+    LoanScheduleResultModel,
+    StatementLineDefinitionModel,
+    StatementLineResultModel,
+)
 from app.infrastructure.database.models.template_model import (
     IndustryTemplateFieldModel,
     IndustryTemplateModel,
@@ -84,4 +93,12 @@ __all__ = [
     "IndustryTemplateModel",
     "IndustryTemplateFieldModel",
     "HistoricalStatementLineModel",
+    "StatementLineDefinitionModel",
+    "EntityStatementMappingModel",
+    "CalculationRunModel",
+    "CalculationRunSnapshotModel",
+    "StatementLineResultModel",
+    "LoanScheduleResultModel",
+    "AssetScheduleResultModel",
 ]
+

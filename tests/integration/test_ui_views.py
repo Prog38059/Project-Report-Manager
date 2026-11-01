@@ -19,6 +19,9 @@ from app.application.dtos.entity_dto import CreateEntityDTO
 from app.common.types import ConstitutionCode
 
 
+from app.presentation.views.statements_view import StatementsView
+
+
 @pytest.fixture(scope="session")
 def qapp():
     """Ensure a single QApplication instance exists with offscreen rendering."""
@@ -44,6 +47,7 @@ def test_main_window_and_views_instantiation(
     assert isinstance(window.view_clients, ClientView)
     assert isinstance(window.view_entities, EntityView)
     assert isinstance(window.view_projects, ProjectView)
+    assert isinstance(window.view_statements, StatementsView)
     assert isinstance(window.view_backup, BackupView)
 
     # Add a client and refresh views
@@ -72,4 +76,8 @@ def test_main_window_and_views_instantiation(
     window.nav_list.setCurrentRow(4)
     assert window.stack.currentIndex() == 4
 
+    window.nav_list.setCurrentRow(5)
+    assert window.stack.currentIndex() == 5
+
     window.close()
+

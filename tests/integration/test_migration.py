@@ -42,6 +42,13 @@ def test_alembic_upgrade_and_downgrade(test_config: AppConfig):
     assert "industry_templates" in tables
     assert "industry_template_fields" in tables
     assert "historical_statement_lines" in tables
+    assert "statement_line_definitions" in tables
+    assert "entity_statement_mappings" in tables
+    assert "calculation_runs" in tables
+    assert "calculation_run_snapshots" in tables
+    assert "statement_line_results" in tables
+    assert "loan_schedule_results" in tables
+    assert "asset_schedule_results" in tables
 
     # Verify seed data
     cursor.execute("SELECT COUNT(*) FROM industry_templates;")
@@ -54,6 +61,8 @@ def test_alembic_upgrade_and_downgrade(test_config: AppConfig):
     assert cursor.fetchone()[0] >= 6
     cursor.execute("SELECT COUNT(*) FROM expense_heads;")
     assert cursor.fetchone()[0] >= 10
+    cursor.execute("SELECT COUNT(*) FROM statement_line_definitions;")
+    assert cursor.fetchone()[0] >= 30
     conn.close()
 
     # 2. Downgrade to base
