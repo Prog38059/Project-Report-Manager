@@ -104,11 +104,12 @@ class CalculationRunModel(Base):
     validation_error_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     validation_warning_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
-    # Relationships
     snapshot = relationship("CalculationRunSnapshotModel", back_populates="run", uselist=False, cascade="all, delete-orphan")
     line_results = relationship("StatementLineResultModel", back_populates="run", cascade="all, delete-orphan")
     loan_results = relationship("LoanScheduleResultModel", back_populates="run", cascade="all, delete-orphan")
     asset_results = relationship("AssetScheduleResultModel", back_populates="run", cascade="all, delete-orphan")
+    ratio_results = relationship("RatioResultModel", back_populates="run", cascade="all, delete-orphan")
+    validation_results = relationship("ValidationResultModel", back_populates="run", cascade="all, delete-orphan")
 
     __table_args__ = (
         UniqueConstraint("scenario_id", "run_number", name="uq_scenario_run_number"),
@@ -225,3 +226,64 @@ class AssetScheduleResultModel(Base):
     __table_args__ = (
         UniqueConstraint("calculation_run_id", "asset_item_id", "period_id", name="uq_asset_sched_period"),
     )
+
+
+class RatioResultModel(Base):
+    __tablename__ = "ratio_results"
+
+    id: Mapped[uuid.UUID] = mapped_column(GUID(), primary_key=True, default=uuid.uuid4)
+    calculation_run_id: Mapped[uuid.UUID] = mapped_column(
+        GUID(),
+        ForeignKey("calculation_runs.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    period_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        GUID(),
+        ForeignKey("project_periods.id", ondelete="CASCADE"),
+        nullable=True,
+        index=True,
+    )
+    ratio_code: Mapped[str] = mapped_column(String(60), nullable=False)
+    numerator_value_text: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    denominator_value_text: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    ratio_value_text: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    unit_code: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    method_code: Mapped[str] = mapped_column(String(60), nullable=False)
+    interpretation_code: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    benchmark_note: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    run = relationship("CalculationRunModel", back_populates="ratio_results")
+
+    __table_args__ = (
+        Index("idx_ratio_run_code", "calculation_run_id", "ratio_code"),
+    )
+
+
+class ValidationResultModel(Base):
+    __tablename__ = "validation_results"
+
+    id: Mapped[uuid.UUID] = mapped_column(GUID(), primary_key=True, default=uuid.uuid4)
+    calculation_run_id: Mapped[uuid.UUID] = mapped_column(
+        GUID(),
+        ForeignKey("calculation_runs.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    rule_code: Mapped[str] = mapped_column(String(60), nullable=False)
+    severity: Mapped[str] = mapped_column(String(15), nullable=False)  # ERROR, WARNING, INFO
+    scope_code: Mapped[str] = mapped_column(String(30), nullable=False)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    expected_value_text: Mapped[Optional[str]] = mapped_column(String(120), nullable=True)
+    actual_value_text: Mapped[Optional[str]] = mapped_column(String(120), nullable=True)
+    resolution_status: Mapped[str] = mapped_column(String(20), default="OPEN", nullable=False)
+    override_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    resolved_by_label: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    resolved_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    run = relationship("CalculationRunModel", back_populates="validation_results")
+
+    __table_args__ = (
+        Index("idx_val_results_run_sev", "calculation_run_id", "severity"),
+    )
+

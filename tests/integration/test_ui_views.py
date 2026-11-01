@@ -19,6 +19,7 @@ from app.application.dtos.entity_dto import CreateEntityDTO
 from app.common.types import ConstitutionCode
 
 
+from app.presentation.views.appraisal_view import AppraisalView
 from app.presentation.views.statements_view import StatementsView
 
 
@@ -48,6 +49,7 @@ def test_main_window_and_views_instantiation(
     assert isinstance(window.view_entities, EntityView)
     assert isinstance(window.view_projects, ProjectView)
     assert isinstance(window.view_statements, StatementsView)
+    assert isinstance(window.view_appraisal, AppraisalView)
     assert isinstance(window.view_backup, BackupView)
 
     # Add a client and refresh views
@@ -78,6 +80,9 @@ def test_main_window_and_views_instantiation(
 
     window.nav_list.setCurrentRow(5)
     assert window.stack.currentIndex() == 5
+
+    window.nav_list.setCurrentRow(6)
+    assert window.stack.currentIndex() == 6
 
     window.close()
 

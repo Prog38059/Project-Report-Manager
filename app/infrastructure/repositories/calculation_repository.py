@@ -13,8 +13,10 @@ from app.infrastructure.database.models.calculation_model import (
     CalculationRunSnapshotModel,
     EntityStatementMappingModel,
     LoanScheduleResultModel,
+    RatioResultModel,
     StatementLineDefinitionModel,
     StatementLineResultModel,
+    ValidationResultModel,
 )
 
 
@@ -159,3 +161,40 @@ class CalculationRepository:
             stmt = stmt.where(StatementLineDefinitionModel.active_flag.is_(True))
         stmt = stmt.order_by(StatementLineDefinitionModel.sort_order)
         return list(self.session.execute(stmt).scalars().all())
+
+    def save_ratio_results(self, ratio_results: List[RatioResultModel]) -> None:
+        self.session.add_all(ratio_results)
+        self.session.flush()
+
+    def save_validation_results(self, validation_results: List[ValidationResultModel]) -> None:
+        self.session.add_all(validation_results)
+        self.session.flush()
+
+    def get_ratio_results_for_run(self, run_id: uuid.UUID) -> List[RatioResultModel]:
+        stmt = (
+            select(RatioResultModel)
+            .where(RatioResultModel.calculation_run_id == run_id)
+        )
+        return list(self.session.execute(stmt).scalars().all())
+
+    def get_validation_results_for_run(self, run_id: uuid.UUID) -> List[ValidationResultModel]:
+        stmt = (
+            select(ValidationResultModel)
+            .where(ValidationResultModel.calculation_run_id == run_id)
+        )
+        return list(self.session.execute(stmt).scalars().all())
+
+    def update_run_validation_counts(
+        self,
+        run_id: uuid.UUID,
+        error_count: int,
+        warning_count: int,
+        run_status: Optional[str] = None,
+    ) -> None:
+        run = self.get_run_by_id(run_id)
+        if run:
+            run.validation_error_count = error_count
+            run.validation_warning_count = warning_count
+            if run_status:
+                run.run_status = run_status
+            self.session.flush()

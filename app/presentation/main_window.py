@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
 from app.config import AppConfig
 from app.infrastructure.database.connection import DatabaseManager
 from app.infrastructure.security.encryption import EncryptionService
+from app.application.services.appraisal_service import AppraisalService
 from app.application.services.backup_service import BackupService
 from app.application.services.client_service import ClientService
 from app.application.services.entity_service import EntityService
@@ -28,6 +29,7 @@ from app.application.services.project_service import ProjectService
 from app.application.services.revenue_service import RevenueService
 from app.application.services.template_service import TemplateService
 
+from app.presentation.views.appraisal_view import AppraisalView
 from app.presentation.views.backup_view import BackupView
 from app.presentation.views.client_view import ClientView
 from app.presentation.views.dashboard_view import DashboardView
@@ -65,6 +67,7 @@ class MainWindow(QMainWindow):
         self.template_service = TemplateService(db_manager)
         self.historical_service = HistoricalService(db_manager)
         self.fin_engine_service = FinancialEngineService(db_manager)
+        self.appraisal_service = AppraisalService(db_manager)
 
         self.setWindowTitle("Project Report Manager v1.0")
         self.resize(1180, 750)
@@ -116,7 +119,8 @@ class MainWindow(QMainWindow):
             ("🏛 Entities", 2),
             ("📁 Projects", 3),
             ("📈 Statements", 4),
-            ("💾 Backup & Restore", 5),
+            ("⚖️ Appraisal & Audit", 5),
+            ("💾 Backup & Restore", 6),
         ]
         for label, idx in nav_items:
             item = QListWidgetItem(label)
@@ -146,6 +150,10 @@ class MainWindow(QMainWindow):
             project_service=self.project_service,
             financial_engine_service=self.fin_engine_service,
         )
+        self.view_appraisal = AppraisalView(
+            project_service=self.project_service,
+            appraisal_service=self.appraisal_service,
+        )
         self.view_backup = BackupView(self.backup_service, self.config)
 
         self.stack.addWidget(self.view_dashboard)
@@ -153,6 +161,7 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.view_entities)
         self.stack.addWidget(self.view_projects)
         self.stack.addWidget(self.view_statements)
+        self.stack.addWidget(self.view_appraisal)
         self.stack.addWidget(self.view_backup)
 
         body_layout.addWidget(self.stack)
@@ -192,6 +201,8 @@ class MainWindow(QMainWindow):
         elif row == 4:
             self.view_statements.refresh_projects()
         elif row == 5:
+            self.view_appraisal.refresh_projects_list()
+        elif row == 6:
             self.view_backup.refresh()
 
 

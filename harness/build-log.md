@@ -183,3 +183,59 @@
 - **Rollback notes:** Run `alembic downgrade 0002_phase2_inputs` or revert git commit.
 - **Approval requested for next phase:** Phase 4 — Appraisal Metrics & Validation (DSCR formulas, break-even analysis, IRR, NPV, sensitivity analysis, cross-statement validation rules, and error/warning reporting).
 
+## Phase 4 — Appraisal Metrics & Validation Engine (Completed 2026-11-01)
+- **Date:** 2026-11-01
+- **Phase:** Phase 4 — Appraisal Metrics & Validation Engine
+- **Summary:** Built comprehensive lender appraisal metrics, financial ratios, break-even analysis, NPV/IRR, sensitivity analysis, and cross-statement validation rules:
+  1. Lender Appraisal Domain Engine (`app/domain/financial/appraisal.py`):
+     - Exact Decimal calculations for Liquidity (Current Ratio, Quick Ratio), Leverage (Debt-Equity, Term Debt-Equity, Interest Coverage Ratio), Margins (Gross Profit %, EBITDA %, EBIT %, PAT %, ROCE %, RONW %).
+     - Lender DSCR Variants: Gross Cash Flow DSCR `(PAT + Dep + Term Int) / (Principal + Term Int)` and Net Operating CFADS DSCR `CFADS / Debt Service`, Average DSCR, and Cumulative DSCR.
+     - Break-Even Analysis: Segregation of Fixed Costs vs Variable Costs, Contribution Margin %, Break-Even Sales paise & Capacity Utilization %, Cash Break-Even (excl. depreciation), and Margin of Safety.
+     - Project Lifetime Returns: Free Cash Flow to Firm, Net Present Value (NPV) at configurable discount rates, Project IRR via 60-iteration exact Decimal bisection, Simple Payback Period, and Profitability Index.
+     - Sensitivity Analysis: Simulating variations (+/-5%, +/-10%) on Selling Price and Raw Material Costs.
+  2. Cross-Statement Validation Engine (`app/domain/financial/validation.py`):
+     - Accounting Invariants: `VAL-BS-001` (Zero-difference Balance Sheet), `VAL-CASH-001` (Non-negative closing cash).
+     - Project Funding Reconciliation: `VAL-FUND-001` (Project Cost vs Means of Finance gap).
+     - Lender Underwriting Rules: `VAL-DSCR-001/002/003` (Average, minimum, and cumulative DSCR thresholds), `VAL-CR-001/002` (Current Ratio benchmarks), `VAL-DER-001` (Debt-Equity ceiling), `VAL-BEP-001` (Capacity Break-Even ceiling).
+  3. Database Schema & Persistence:
+     - Alembic migration `0004_phase4_appraisal_and_validation.py` creating `ratio_results` and `validation_results` tables with cascade delete on calculation runs and indexed lookups.
+     - `CalculationRepository` extended with `save_ratio_results`, `save_validation_results`, queries, and `update_run_validation_counts`.
+  4. Application Service & DTOs:
+     - `app/application/dtos/appraisal_dto.py` defining `AppraisalReportDTO`, `RatioMetricRowDTO`, `ProjectLifetimeReturnsDTO`, `SensitivityRowDTO`, and `ValidationIssueDTO`.
+     - `app/application/services/appraisal_service.py` orchestrating statement reconstruction from runs, domain evaluation, sensitivity variations, database persistence, and run status updates (`SUCCESS`, `COMPLETED_WITH_WARNINGS`, `COMPLETED_WITH_ERRORS`).
+  5. Desktop GUI:
+     - `AppraisalView` (`app/presentation/views/appraisal_view.py`) with 4 KPI summary cards (Project Returns, DSCR Coverage, Solvency/Liquidity, Audit Health), and 4 dedicated sub-tabs: 📊 Financial Ratios & DSCR, 🎯 Break-Even Analysis, 🔀 Sensitivity Matrix, and 🛡️ Audit & Cross-Statement Invariant Rules.
+     - Integrated into `MainWindow` navigation rail with index 5.
+  6. Test Suite:
+     - Unit tests in `tests/unit/test_appraisal_engine.py` (ratios, bisection IRR root-finding, payback, validation rules).
+     - End-to-end integration tests in `tests/integration/test_appraisal_service.py` (projection execution + appraisal evaluation + database persistence + validation count tracking).
+     - UI integration tests in `tests/integration/test_ui_views.py`.
+     - Migration tests in `tests/integration/test_migration.py`.
+     - Total: 50 passed tests in 7.32s (100% pass rate).
+- **Files changed / created:**
+  - `app/domain/financial/appraisal.py`
+  - `app/domain/financial/validation.py`
+  - `app/domain/financial/__init__.py`
+  - `app/infrastructure/database/models/calculation_model.py`
+  - `app/infrastructure/database/models/__init__.py`
+  - `app/infrastructure/repositories/calculation_repository.py`
+  - `app/application/dtos/appraisal_dto.py`
+  - `app/application/services/appraisal_service.py`
+  - `app/application/services/__init__.py`
+  - `app/presentation/views/appraisal_view.py`
+  - `app/presentation/main_window.py`
+  - `migrations/versions/0004_phase4_appraisal_and_validation.py`
+  - `tests/unit/test_appraisal_engine.py`
+  - `tests/integration/test_appraisal_service.py`
+  - `tests/integration/test_migration.py`
+  - `tests/integration/test_ui_views.py`
+  - `harness/build-log.md`
+- **Database migrations:**
+  - `0004_phase4_appraisal_and_validation.py` (creates `ratio_results` and `validation_results`).
+- **Tests/commands executed:**
+  - `python -m pytest tests/ -v`
+- **Test results:** 50 passed in 7.32s (100% passing, 0 warnings, 0 failures).
+- **Known issues:** None.
+- **Rollback notes:** Run `alembic downgrade 0003_phase3_financial_engine` or revert git commit.
+- **Approval requested for next phase:** Phase 5 — Report Generation & Export (PDF, Excel, Word multi-format export, custom styling, watermark, schedule notes, and calculation run audit linkage).
+

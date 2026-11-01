@@ -49,6 +49,8 @@ def test_alembic_upgrade_and_downgrade(test_config: AppConfig):
     assert "statement_line_results" in tables
     assert "loan_schedule_results" in tables
     assert "asset_schedule_results" in tables
+    assert "ratio_results" in tables
+    assert "validation_results" in tables
 
     # Verify seed data
     cursor.execute("SELECT COUNT(*) FROM industry_templates;")

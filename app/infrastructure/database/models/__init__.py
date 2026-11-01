@@ -52,8 +52,10 @@ from app.infrastructure.database.models.calculation_model import (
     CalculationRunSnapshotModel,
     EntityStatementMappingModel,
     LoanScheduleResultModel,
+    RatioResultModel,
     StatementLineDefinitionModel,
     StatementLineResultModel,
+    ValidationResultModel,
 )
 from app.infrastructure.database.models.template_model import (
     IndustryTemplateFieldModel,
@@ -100,5 +102,7 @@ __all__ = [
     "StatementLineResultModel",
     "LoanScheduleResultModel",
     "AssetScheduleResultModel",
+    "RatioResultModel",
+    "ValidationResultModel",
 ]
 
